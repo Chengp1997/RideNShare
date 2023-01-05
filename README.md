@@ -42,27 +42,27 @@ UML 工具 - Astah uml
 
 **package diagram**
 
-![Package Diagram](images/Package Diagram.png)
+<img src="images/PackageDiagram.png" alt="Package Diagram" style="zoom:50%;" />
 
 **communication**
 
-![UseCase Diagram - communication](images/UseCase Diagram - communication.png)
+<img src="images/communication.png" alt="UseCase Diagram - communication" style="zoom:50%;" />
 
 **order**
 
-![UseCase Diagram - order](images/UseCase Diagram - order.png)
+<img src="images/order.png" alt="UseCase Diagram - order" style="zoom:50%;" />
 
 **post**
 
-![UseCase Diagram - Post](images/UseCase Diagram - Post.png)
+<img src="images/Post.png" alt="UseCase Diagram - Post" style="zoom:50%;" />
 
 **profile**
 
-![UseCase Diagram - Profile](images/UseCase Diagram - Profile.png)
+<img src="images/Profile.png" alt="UseCase Diagram - Profile" style="zoom:50%;" />
 
 **sso**
 
-![UseCase Diagram - SSO](images/UseCase Diagram - SSO.png)
+<img src="images/SSO.png" alt="UseCase Diagram - SSO" style="zoom:50%;" />
 
 ### Front end design
 
