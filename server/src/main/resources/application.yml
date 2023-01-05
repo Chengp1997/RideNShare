@@ -6,6 +6,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: XXXXXXX
+    username: XXXX
+    password: XXXX
   mail:
     host: smtp.gmail.com
     port: 587
