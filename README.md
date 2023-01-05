@@ -30,7 +30,9 @@ We are Master of Engineering students majoring in computer science at Virginia T
 
 If you want to use this project, don't forget to:
 
--  configure the properties file 
+-  configure the properties file (server/src/main/resources/application.yml) Change the XXXXX to your own.
+- Frontend: `npm -i` , `npm run build`, `npm run serve`
+- Backend: It's a springboot project, just run it.
 
 
 
