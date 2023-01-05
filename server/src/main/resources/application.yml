@@ -5,13 +5,11 @@ spring:
       cleanup-cron: 0 * * * * *
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://ridenshare.cswbpakhbujg.us-east-1.rds.amazonaws.com:3306/ridenshare?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
-    username: capstone
-    password: Capstone2022!
+    url: XXXXXXX
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ridenshareforvt@gmail.com
+    username: XXXXX@gmail.com
     password: iakintensccvvurx
     properties:
       mail:

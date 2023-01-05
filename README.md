@@ -26,6 +26,14 @@ We are Master of Engineering students majoring in computer science at Virginia T
 |                    | Project management: **Jira**                                 |
 |                    | Deployment: AWS. **AWS S3** as image Server, **AWS RDS** as database, **AWS EC2** as server. **Nginx** as proxy server for request balancing |
 
+## How to use this project
+
+If you want to use this project, don't forget to:
+
+-  configure the properties file 
+
+
+
 ## Architecture
 
 **<img src="images/architecture.png" alt="img" style="zoom:50%;" />**
