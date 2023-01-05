@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.vt.ridenshare.server.dao.OrderDao">
+
+    <resultMap type="edu.vt.ridenshare.server.entity.Order" id="OrderMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="driverId" column="driver_id" jdbcType="INTEGER"/>
+        <result property="passengerId" column="passenger_id" jdbcType="INTEGER"/>
+        <result property="postId" column="post_id" jdbcType="INTEGER"/>
+        <result property="price" column="price" jdbcType="NUMERIC"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="chatId" column="chat_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--query by id-->
+    <select id="queryById" resultMap="OrderMap">
+        select
+            id, create_time, update_time, driver_id, passenger_id, post_id, price, status, chat_id
+        from `order`
+        where id = #{id}
+    </select>
+
+<!-- query order by post id-->
+    <select id="queryByPostId" resultMap="OrderMap">
+        select
+            o.id, o.create_time, o.update_time, o.driver_id, o.passenger_id, o.post_id, o.price, o.status, o.chat_id
+        from `order` as o, post as p
+        where post_id = #{postId} and o.post_id = p.id
+    </select>
+
+    <!--query all rows-->
+    <select id="queryAllByLimit" resultMap="OrderMap">
+        select
+        id, create_time, update_time, driver_id, passenger_id, post_id, price, status, chat_id
+        from `order`
+        <where>
+            <if test="order.id != null">
+                and id = #{order.id}
+            </if>
+            <if test="order.createTime != null">
+                and create_time = #{order.createTime}
+            </if>
+            <if test="order.updateTime != null">
+                and update_time = #{order.updateTime}
+            </if>
+            <if test="order.driverId != null">
+                and driver_id = #{order.driverId}
+            </if>
+            <if test="order.passengerId != null">
+                and passenger_id = #{order.passengerId}
+            </if>
+            <if test="order.postId != null">
+                and post_id = #{order.postId}
+            </if>
+            <if test="order.price != null">
+                and price = #{order.price}
+            </if>
+            <if test="order.status != null">
+                and status = #{order.status}
+            </if>
+            <if test="order.chatId != null">
+                and chat_id = #{order.chatId}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <select id="queryAllByUserId" resultMap="OrderMap">
+        select
+        id, create_time, update_time, driver_id, passenger_id, post_id, price, status, chat_id
+        from `order` as o
+        <where>
+            <if test="userId != null">
+                o.driver_id = #{userId} or o.passenger_id = #{userId}
+            </if>
+<!--        or-->
+<!--            <if test="order.passengerId != null">-->
+<!--                passenger_id = #{userId}-->
+<!--            </if>-->
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--count size-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from `order`
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="driverId != null">
+                and driver_id = #{driverId}
+            </if>
+            <if test="passengerId != null">
+                and passenger_id = #{passengerId}
+            </if>
+            <if test="postId != null">
+                and post_id = #{postId}
+            </if>
+            <if test="price != null">
+                and price = #{price}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="chatId != null">
+                and chat_id = #{chatId}
+            </if>
+        </where>
+    </select>
+
+    <!--insert-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into `order`(create_time, update_time, driver_id, passenger_id, post_id, price, status, chat_id)
+        values (#{createTime}, #{updateTime}, #{driverId}, #{passengerId}, #{postId}, #{price}, #{status}, #{chatId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into `order`(create_time, update_time, driver_id, passenger_id, post_id, price, status, chat_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.createTime}, #{entity.updateTime}, #{entity.driverId}, #{entity.passengerId}, #{entity.postId}, #{entity.price}, #{entity.status}, #{entity.chatId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into `order`(create_time, update_time, driver_id, passenger_id, post_id, price, status, chat_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.createTime}, #{entity.updateTime}, #{entity.driverId}, #{entity.passengerId}, #{entity.postId}, #{entity.price}, #{entity.status}, #{entity.chatId})
+        </foreach>
+        on duplicate key update
+        create_time = values(create_time),
+        update_time = values(update_time),
+        driver_id = values(driver_id),
+        passenger_id = values(passenger_id),
+        post_id = values(post_id),
+        price = values(price),
+        status = values(status),
+        chat_id = values(chat_id)
+    </insert>
+
+    <!--update by id-->
+    <update id="update">
+        update `order`
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="driverId != null">
+                driver_id = #{driverId},
+            </if>
+            <if test="passengerId != null">
+                passenger_id = #{passengerId},
+            </if>
+            <if test="postId != null">
+                post_id = #{postId},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="chatId != null">
+                chat_id = #{chatId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--delete by id-->
+    <delete id="deleteById">
+        delete from `order` where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,39 @@
+spring:
+  session:
+    store-type: jdbc
+    jdbc:
+      cleanup-cron: 0 * * * * *
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://ridenshare.cswbpakhbujg.us-east-1.rds.amazonaws.com:3306/ridenshare?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+    username: capstone
+    password: Capstone2022!
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ridenshareforvt@gmail.com
+    password: iakintensccvvurx
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connection-timeout: 5000
+          timeout: 5000
+          write timeout: 5000
+
+        transport:
+          protocol: smtp
+
+server:
+  port: 8888
+  servlet:
+    context-path: /api
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+AmazonS3:
+  accessKey: XXXXXXX
+  accessSecretKey: XXXXXXXXX

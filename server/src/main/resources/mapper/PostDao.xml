@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.vt.ridenshare.server.dao.PostDao">
+
+    <resultMap type="edu.vt.ridenshare.server.entity.Post" id="PostMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="spotIdStart" column="spot_id_start" jdbcType="INTEGER"/>
+        <result property="spotIdEnd" column="spot_id_end" jdbcType="INTEGER"/>
+        <result property="price" column="price" jdbcType="NUMERIC"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="queryById" resultMap="PostMap">
+        select
+          id, create_time, update_time, start_time, end_time, spot_id_start, spot_id_end, price, user_id, status, type
+        from post
+        where id = #{id}
+        <if test="statusCode != -1">
+            and status = #{statusCode}
+        </if>
+    </select>
+
+    <select id="queryByUserId" resultMap="PostMap">
+        select
+            id, create_time, update_time, start_time, end_time, spot_id_start, spot_id_end, price, user_id, status, type
+        from post
+        where user_id = #{userId}
+        <if test="statusCode != -1">
+            and status = #{statusCode}
+        </if>
+        order by update_time desc
+    </select>
+
+    <select id="queryAllByLimit" resultMap="PostMap">
+        select
+            id, create_time, update_time, start_time, end_time, spot_id_start, spot_id_end, price, user_id, status, type
+        from post
+        <where>
+            status = '0'
+            <if test="post.id != null">
+                and id = #{post.id}
+            </if>
+            <if test="post.createTime != null">
+                and create_time = #{post.createTime}
+            </if>
+            <if test="post.updateTime != null">
+                and update_time = #{post.updateTime}
+            </if>
+            <if test="post.startTime != null">
+                <![CDATA[
+                and start_time >= #{post.startTime}
+                ]]>
+            </if>
+            <if test="post.endTime != null">
+                <![CDATA[
+                and end_time <= #{post.endTime}
+                ]]>
+            </if>
+            <if test="post.spotIdStart != null">
+                and spot_id_start = #{post.spotIdStart}
+            </if>
+            <if test="post.spotIdEnd != null">
+                and spot_id_end = #{post.spotIdEnd}
+            </if>
+            <if test="post.price != null">
+                and price = #{post.price}
+            </if>
+            <if test="post.userId != null">
+                and user_id = #{post.userId}
+            </if>
+            <if test="post.status != null">
+                and status = #{post.status}
+            </if>
+            <if test="post.type != null">
+                and type = #{post.type}
+            </if>
+        </where>
+        order by update_time desc
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from post
+        <where>
+            1 = 1
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="startTime != null">
+                <![CDATA[
+                and start_time >= #{startTime}
+                ]]>
+            </if>
+            <if test="endTime != null">
+                <![CDATA[
+                and end_time <= #{endTime}
+                ]]>
+            </if>
+            <if test="spotIdStart != null">
+                and spot_id_start = #{spotIdStart}
+            </if>
+            <if test="spotIdEnd != null">
+                and spot_id_end = #{spotIdEnd}
+            </if>
+            <if test="price != null">
+                and price = #{price}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into post(create_time, update_time, start_time, end_time, spot_id_start, spot_id_end, price, user_id, status, type)
+        values (#{createTime}, #{updateTime}, #{startTime}, #{endTime}, #{spotIdStart}, #{spotIdEnd}, #{price}, #{userId}, #{status}, #{type})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into post(create_time, update_time, start_time, end_time, spot_id_start, spot_id_end, price, user_id, status, type)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.createTime}, #{entity.updateTime}, #{entity.startTime}, #{entity.endTime}, #{entity.spotIdStart}, #{entity.spotIdEnd}, #{entity.price}, #{entity.userId}, #{entity.status}, #{entity.type})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into post(create_time, update_time, start_time, end_time, spot_id_start, spot_id_end, price, user_id, status, type)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.createTime}, #{entity.updateTime}, #{entity.startTime}, #{entity.endTime}, #{entity.spotIdStart}, #{entity.spotIdEnd}, #{entity.price}, #{entity.userId}, #{entity.status}, #{entity.type})
+        </foreach>
+        on duplicate key update
+        create_time = values(create_time),
+        update_time = values(update_time),
+        start_time = values(start_time),
+        end_time = values(end_time),
+        spot_id_start = values(spot_id_start),
+        spot_id_end = values(spot_id_end),
+        price = values(price),
+        user_id = values(user_id),
+        status = values(status),
+        type = values(type)
+    </insert>
+
+    <update id="update">
+        update post
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+            <if test="spotIdStart != null">
+                spot_id_start = #{spotIdStart},
+            </if>
+            <if test="spotIdEnd != null">
+                spot_id_end = #{spotIdEnd},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from post where id = #{id}
+    </delete>
+
+</mapper>
+

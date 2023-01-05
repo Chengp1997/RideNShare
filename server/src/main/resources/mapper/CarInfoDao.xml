@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.vt.ridenshare.server.dao.CarInfoDao">
+
+    <resultMap type="edu.vt.ridenshare.server.entity.CarInfo" id="CarInfoMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="plateNo" column="plate_no" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="carType" column="car_type" jdbcType="VARCHAR"/>
+        <result property="capacity" column="capacity" jdbcType="INTEGER"/>
+        <result property="years" column="years" jdbcType="INTEGER"/>
+        <result property="image" column="image" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="queryById" resultMap="CarInfoMap">
+        select
+          id, plate_no, user_id, car_type, capacity, years, image, create_time, update_time
+        from car_info
+        where id = #{id}
+    </select>
+
+    <select id="findCarByUserId" resultMap="CarInfoMap">
+        select
+            id, plate_no, user_id, car_type, capacity, years, image, create_time, update_time
+        from car_info
+        where user_id = #{userId}
+    </select>
+
+    <select id="queryByUserIds" resultMap="CarInfoMap">
+        select
+            id, plate_no, user_id, car_type, capacity, years, image, create_time, update_time
+        from car_info
+        where 1 = 1
+        <choose>
+            <when test="userIdList.size() > 0">
+                and user_id in
+                <foreach collection="userIdList" index="" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                and 1 = 2
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="queryAllByLimit" resultMap="CarInfoMap">
+        select
+          id, plate_no, user_id, car_type, capacity, years, image, create_time, update_time
+        from car_info
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="plateNo != null and plateNo != ''">
+                and plate_no = #{plateNo}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="carType != null and carType != ''">
+                and car_type = #{carType}
+            </if>
+            <if test="capacity != null">
+                and capacity = #{capacity}
+            </if>
+            <if test="years != null">
+                and years = #{years}
+            </if>
+            <if test="image != null and image != ''">
+                and image = #{image}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from car_info
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="plateNo != null and plateNo != ''">
+                and plate_no = #{plateNo}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="carType != null and carType != ''">
+                and car_type = #{carType}
+            </if>
+            <if test="capacity != null">
+                and capacity = #{capacity}
+            </if>
+            <if test="years != null">
+                and years = #{years}
+            </if>
+            <if test="image != null and image != ''">
+                and image = #{image}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into car_info(plate_no, user_id, car_type, capacity, years, image, create_time, update_time)
+        values (#{plateNo}, #{userId}, #{carType}, #{capacity}, #{years}, #{image}, #{createTime}, #{updateTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into car_info(plate_no, user_id, car_type, capacity, years, image, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.plateNo}, #{entity.userId}, #{entity.carType}, #{entity.capacity}, #{entity.years}, #{entity.image}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into car_info(plate_no, user_id, car_type, capacity, years, image, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.plateNo}, #{entity.userId}, #{entity.carType}, #{entity.capacity}, #{entity.years}, #{entity.image}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+        on duplicate key update
+        plate_no = values(plate_no),
+        user_id = values(user_id),
+        car_type = values(car_type),
+        capacity = values(capacity),
+        years = values(years),
+        image = values(image),
+        create_time = values(create_time),
+        update_time = values(update_time)
+    </insert>
+
+    <update id="update">
+        update car_info
+        <set>
+            <if test="plateNo != null and plateNo != ''">
+                plate_no = #{plateNo},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="carType != null and carType != ''">
+                car_type = #{carType},
+            </if>
+            <if test="capacity != null">
+                capacity = #{capacity},
+            </if>
+            <if test="years != null">
+                years = #{years},
+            </if>
+            <if test="image != null and image != ''">
+                image = #{image},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from car_info where id = #{id}
+    </delete>
+
+</mapper>
+

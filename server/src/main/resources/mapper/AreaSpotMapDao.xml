@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.vt.ridenshare.server.dao.AreaSpotMapDao">
+
+    <resultMap type="edu.vt.ridenshare.server.entity.AreaSpotMap" id="AreaSpotMapMap">
+        <result property="areaId" column="area_id" jdbcType="INTEGER"/>
+        <result property="spotId" column="spot_id" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="queryByAreaId" resultMap="AreaSpotMapMap">
+        select
+          area_id, spot_id, create_time, update_time
+        from area_spot_map
+        where area_id = #{areaId}
+    </select>
+
+    <select id="queryAllByLimit" resultMap="AreaSpotMapMap">
+        select
+          area_id, spot_id, create_time, update_time
+        from area_spot_map
+        <where>
+            <if test="areaId != null">
+                and area_id = #{areaId}
+            </if>
+            <if test="spotId != null">
+                and spot_id = #{spotId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from area_spot_map
+        <where>
+            <if test="areaId != null">
+                and area_id = #{areaId}
+            </if>
+            <if test="spotId != null">
+                and spot_id = #{spotId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" keyProperty="areaId" useGeneratedKeys="true">
+        insert into area_spot_map(create_time, update_time)
+        values (#{createTime}, #{updateTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="areaId" useGeneratedKeys="true">
+        insert into area_spot_map(create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.createTime}, #{entity.updateTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="areaId" useGeneratedKeys="true">
+        insert into area_spot_map(create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.createTime}, #{entity.updateTime})
+        </foreach>
+        on duplicate key update
+        create_time = values(create_time),
+        update_time = values(update_time)
+    </insert>
+
+    <update id="update">
+        update area_spot_map
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where area_id = #{areaId}
+    </update>
+
+    <delete id="deleteById">
+        delete from area_spot_map where area_id = #{areaId}
+    </delete>
+
+    <select id="queryBySpotId" resultMap="AreaSpotMapMap">
+        select
+            area_id, spot_id, create_time, update_time
+        from area_spot_map
+        where spot_id = #{spotId}
+    </select>
+</mapper>
+

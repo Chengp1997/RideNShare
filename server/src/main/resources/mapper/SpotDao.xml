@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.vt.ridenshare.server.dao.SpotDao">
+
+    <resultMap type="edu.vt.ridenshare.server.entity.Spot" id="SpotMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="location" column="location" jdbcType="VARCHAR"/>
+        <result property="longitude" column="longitude" jdbcType="NUMERIC"/>
+        <result property="latitude" column="latitude" jdbcType="NUMERIC"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="queryById" resultMap="SpotMap">
+        select
+          id, location, longitude, latitude, create_time, update_time
+        from spot
+        where id = #{id}
+    </select>
+
+    <select id="queryAllByLimit" resultMap="SpotMap">
+        select
+          id, location, longitude, latitude, create_time, update_time
+        from spot
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="location != null and location != ''">
+                and location = #{location}
+            </if>
+            <if test="longitude != null">
+                and longitude = #{longitude}
+            </if>
+            <if test="latitude != null">
+                and latitude = #{latitude}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from spot
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="location != null and location != ''">
+                and location = #{location}
+            </if>
+            <if test="longitude != null">
+                and longitude = #{longitude}
+            </if>
+            <if test="latitude != null">
+                and latitude = #{latitude}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into spot(location, longitude, latitude, create_time, update_time)
+        values (#{location}, #{longitude}, #{latitude}, #{createTime}, #{updateTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into spot(location, longitude, latitude, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.location}, #{entity.longitude}, #{entity.latitude}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into spot(location, longitude, latitude, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.location}, #{entity.longitude}, #{entity.latitude}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+        on duplicate key update
+        location = values(location),
+        longitude = values(longitude),
+        latitude = values(latitude),
+        create_time = values(create_time),
+        update_time = values(update_time)
+    </insert>
+
+    <update id="update">
+        update spot
+        <set>
+            <if test="location != null and location != ''">
+                location = #{location},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from spot where id = #{id}
+    </delete>
+
+    <select id="queryByIds" resultMap="SpotMap">
+        select
+        id, location, longitude, latitude, create_time, update_time
+        from spot
+        where 1 = 1
+        <choose>
+            <when test="spotIdList.size() > 0">
+                and id in
+                <foreach collection="spotIdList" index="" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                and 1 = 2
+            </otherwise>
+        </choose>
+        order by location asc
+    </select>
+
+</mapper>
+

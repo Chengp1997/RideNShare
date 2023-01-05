@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.vt.ridenshare.server.dao.RoomDao">
+
+    <resultMap type="edu.vt.ridenshare.server.entity.Room" id="RoomMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="roomname" column="roomName" jdbcType="VARCHAR"/>
+        <result property="user1Id" column="user1_id" jdbcType="INTEGER"/>
+        <result property="user1Name" column="user1_name" jdbcType="VARCHAR"/>
+        <result property="user2Id" column="user2_id" jdbcType="INTEGER"/>
+        <result property="user2Name" column="user2_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="RoomMap">
+        select
+          id, roomName, user1_id, user1_name, user2_id, user2_name
+        from room
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="RoomMap">
+        select
+          id, roomName, user1_id, user1_name, user2_id, user2_name
+        from room
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="roomname != null and roomname != ''">
+                and roomName = #{roomname}
+            </if>
+            <if test="user1Id != null">
+                and user1_id = #{user1Id}
+            </if>
+            <if test="user1Name != null and user1Name != ''">
+                and user1_name = #{user1Name}
+            </if>
+            <if test="user2Id != null">
+                and user2_id = #{user2Id}
+            </if>
+            <if test="user2Name != null and user2Name != ''">
+                and user2_name = #{user2Name}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from room
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="roomname != null and roomname != ''">
+                and roomName = #{roomname}
+            </if>
+            <if test="user1Id != null">
+                and user1_id = #{user1Id}
+            </if>
+            <if test="user1Name != null and user1Name != ''">
+                and user1_name = #{user1Name}
+            </if>
+            <if test="user2Id != null">
+                and user2_id = #{user2Id}
+            </if>
+            <if test="user2Name != null and user2Name != ''">
+                and user2_name = #{user2Name}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into room(roomName, user1_id, user1_name, user2_id, user2_name)
+        values (#{roomname}, #{user1Id}, #{user1Name}, #{user2Id}, #{user2Name})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into room(roomName, user1_id, user1_name, user2_id, user2_name)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.roomname}, #{entity.user1Id}, #{entity.user1Name}, #{entity.user2Id}, #{entity.user2Name})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into room(roomName, user1_id, user1_name, user2_id, user2_name)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.roomname}, #{entity.user1Id}, #{entity.user1Name}, #{entity.user2Id}, #{entity.user2Name})
+        </foreach>
+        on duplicate key update
+        roomName = values(roomName),
+        user1_id = values(user1_id),
+        user1_name = values(user1_name),
+        user2_id = values(user2_id),
+        user2_name = values(user2_name)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update room
+        <set>
+            <if test="roomname != null and roomname != ''">
+                roomName = #{roomname},
+            </if>
+            <if test="user1Id != null">
+                user1_id = #{user1Id},
+            </if>
+            <if test="user1Name != null and user1Name != ''">
+                user1_name = #{user1Name},
+            </if>
+            <if test="user2Id != null">
+                user2_id = #{user2Id},
+            </if>
+            <if test="user2Name != null and user2Name != ''">
+                user2_name = #{user2Name},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from room where id = #{id}
+    </delete>
+
+    <select id="queryByUserId" resultMap="RoomMap">
+        select
+            id, roomName, user1_id, user1_name, user2_id, user2_name
+        from room
+        where user1_id = #{userId} or user2_id = #{userId}
+    </select>
+
+    <select id="queryByUsers" resultMap="RoomMap">
+        select
+            id, roomName, user1_id, user1_name, user2_id, user2_name
+        from room
+        where (user1_id = #{user1} and user2_id = #{user2}) or (user1_id = #{user2} and user2_id = #{user1})
+    </select>
+
+</mapper>
+
